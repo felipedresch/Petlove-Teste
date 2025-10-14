@@ -1,12 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import health, routes
+from app.middleware import LoggingMiddleware
 
 app = FastAPI(
     title="Petlove Assistente API",
     description="API de assistente inteligente usando FastAPI, Google Gemini e LangChain",
     version="0.1.0"
 )
+
+app.add_middleware(LoggingMiddleware)
 
 app.add_middleware(
     CORSMiddleware,

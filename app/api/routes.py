@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.schemas.question import QuestionRequest, AnswerResponse
 from app.core.gemini_client import ask_gemini
+from app.core.logger import logger
 
 router = APIRouter()
 
@@ -26,6 +27,12 @@ async def question_and_answer(request: QuestionRequest) -> AnswerResponse:
     """
     try:
         response_text, metadata = ask_gemini(request.question)
+        
+        try:
+            logger.log_question_answer(request.question, response_text)
+        except Exception:
+            pass
+        
         return AnswerResponse(response=response_text, metadata=metadata)
     except Exception as e:
         raise HTTPException(
