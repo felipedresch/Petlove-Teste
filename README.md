@@ -20,7 +20,9 @@ cd petlove-teste
 uv sync
 ```
 
-3. Execute a aplicação:
+3. Configure as variáveis de ambiente criando um arquivo `.env` na raiz do projeto, seguindo o modelo do `.env.example`.
+
+4. Execute a aplicação:
 ```bash
 uv run python -m app.main
 ```
@@ -33,6 +35,15 @@ uv run uvicorn app.main:app --port 3000 --reload
 ### Testar a API
 
 Acesse `http://127.0.0.1:3000/api/health` para verificar se a API está funcionando.
+
+Para testar o endpoint protegido `/api/question-and-answer`, você precisa incluir o header `x-api-key`:
+
+```bash
+curl -X POST http://127.0.0.1:3000/api/question-and-answer \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: sua-chave-de-autenticacao-aqui" \
+  -d '{"question": "Qual ração você recomenda para um filhote de labrador?"}'
+```
 
 ## 📁 Estrutura do Projeto
 
@@ -52,6 +63,13 @@ petlove-teste/
 ├── pyproject.toml    # Dependências do projeto
 └── README.md
 ```
+
+## Segurança
+
+A API implementa autenticação via API Key para proteger endpoints sensíveis:
+
+- **Endpoint público**: `/api/health` - Não requer autenticação
+- **Endpoint protegido**: `/api/question-and-answer` - Requer header `x-api-key`
 
 ## Tecnologias
 

@@ -2,9 +2,10 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    """Configurações da aplicação."""
+    """Configurações da aplicação. Usa valores do .env se disponíveis, caso contrário, usa os valores padrão."""
     
     GOOGLE_API_KEY: str = "sua-chave-api-aqui"
+    API_KEY: str = "api-key-secreta"
     GEMINI_MODEL: str = "gemini-2.0-flash"
     GEMINI_TEMPERATURE: float = 0.7
     
