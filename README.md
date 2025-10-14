@@ -41,8 +41,12 @@ petlove-teste/
 ├── app/
 │   ├── api/          # Rotas HTTP
 │   ├── core/         # Lógica central (integrações, configs)
+│   ├── middleware/   # Middlewares (logging)
 │   ├── schemas/      # Modelos Pydantic
 │   └── main.py       # Aplicação FastAPI
+├── logs/             # Logs gerados automaticamente
+│   ├── api_requests.txt          # Requisições HTTP
+│   └── questions_answers.csv     # Perguntas e respostas
 ├── tests/            # Testes
 ├── .gitignore
 ├── pyproject.toml    # Dependências do projeto
@@ -56,3 +60,11 @@ petlove-teste/
 - **Pydantic** - Validação de dados
 - **LangChain** - Framework para aplicações com LLMs
 - **Google Gemini** - Modelo de linguagem da Google
+
+## Logging
+
+Sistema de logging automático que registra:
+- **logs/api_requests.txt**: Todas as requisições (método, rota, status, duração)
+- **logs/questions_answers.csv**: Perguntas e respostas do endpoint `/api/question-and-answer` (timestamp, pergunta, preview da resposta)
+
+Erros de logging não interrompem a API.
