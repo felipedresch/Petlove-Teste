@@ -2,15 +2,15 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from app.core.config import settings
 
 
-def ask_gemini(pergunta: str) -> str:
+def ask_gemini(pergunta: str) -> tuple[str, dict]:
     """
-    Envia uma pergunta para o Google Gemini e retorna a resposta em texto.
+    Envia uma pergunta para o Google Gemini e retorna a resposta em texto com metadados.
     
     Args:
         pergunta: A pergunta a ser enviada ao Gemini
         
     Returns:
-        str: A resposta do Gemini em texto simples
+        tuple[str, dict]: Tupla contendo (resposta_texto, metadados)
     """
     llm = ChatGoogleGenerativeAI(
         model=settings.GEMINI_MODEL,
@@ -19,5 +19,14 @@ def ask_gemini(pergunta: str) -> str:
     )
     
     response = llm.invoke(pergunta)
-    return response.content
+    
+    metadata = {
+        "model": settings.GEMINI_MODEL,
+        "temperature": settings.GEMINI_TEMPERATURE,
+    }
+    
+    if hasattr(response, 'usage_metadata'):
+        metadata.update(response.usage_metadata)
+    
+    return response.content, metadata
 

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import health
+from app.api import health, routes
 
 app = FastAPI(
     title="Petlove Assistente API",
@@ -17,6 +17,7 @@ app.add_middleware(
 )
 
 app.include_router(health.router, tags=["Health"], prefix="/api")
+app.include_router(routes.router, tags=["Gemini"], prefix="/api")
 
 
 if __name__ == "__main__":
