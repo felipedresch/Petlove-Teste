@@ -1,4 +1,5 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.messages import SystemMessage, HumanMessage
 from app.core.config import settings
 
 
@@ -18,7 +19,9 @@ def ask_gemini(pergunta: str) -> tuple[str, dict]:
         temperature=settings.GEMINI_TEMPERATURE
     )
     
-    response = llm.invoke(pergunta)
+    messages = [SystemMessage(content=settings.SYSTEM_PROMPT), HumanMessage(content=pergunta)]
+    
+    response = llm.invoke(messages)
     
     metadata = {
         "model": settings.GEMINI_MODEL,
