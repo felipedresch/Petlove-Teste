@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import health, routes
+from app.api import health, questions_and_answers
 from app.middleware import LoggingMiddleware
 
 app = FastAPI(
@@ -20,7 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(health.router, tags=["Health"], prefix="/api")
-app.include_router(routes.router, tags=["Gemini"], prefix="/api")
+app.include_router(questions_and_answers.router, tags=["Gemini"], prefix="/api")
 
 
 if __name__ == "__main__":
