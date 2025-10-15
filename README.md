@@ -45,6 +45,19 @@ curl -X POST http://127.0.0.1:3000/api/question-and-answer \
   -d '{"question": "Qual ração você recomenda para um filhote de labrador?"}'
 ```
 
+### Testes
+
+Execute os testes automatizados com pytest:
+
+```bash
+uv run pytest
+```
+
+Os testes cobrem:
+- **Health check**: Validação do endpoint `/api/health`
+- **Autenticação**: Verificação de API key
+- **Perguntas e respostas**: Testes do endpoint `/api/question-and-answer` com mocks do Gemini
+
 ## 📁 Estrutura do Projeto
 
 ```
