@@ -1,0 +1,25 @@
+services:
+  ptlv:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ptlv
+    env_file:
+      - .env
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ptlv.rule=Host(`fakepetloveapi.shop`)"
+      - "traefik.http.routers.ptlv.entrypoints=websecure"
+      - "traefik.http.routers.ptlv.tls.certresolver=myresolver"
+      - "traefik.http.services.ptlv.loadbalancer.server.port=3000"
+      # rate limiting
+      - "traefik.http.middlewares.ptlv-ratelimit.ratelimit.average=100"
+      - "traefik.http.middlewares.ptlv-ratelimit.ratelimit.burst=50"
+    networks:
+      - traefik_proxy
+
+networks:
+  traefik_proxy:
+    external: true
+

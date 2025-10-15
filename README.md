@@ -58,6 +58,9 @@ Os testes cobrem:
 - **Autenticação**: Verificação de API key
 - **Perguntas e respostas**: Testes do endpoint `/api/question-and-answer` com mocks do Gemini
 
+## Deploy em Produção
+A API está disponível em: `https://fakepetloveapi.shop`
+
 ## 📁 Estrutura do Projeto
 
 ```
