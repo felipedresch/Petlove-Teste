@@ -1,104 +1,178 @@
-# Petlove Assistente API
+# Petlove AI Assistant
 
-API de assistente inteligente usando FastAPI, Google Gemini e LangChain.
+![CI/CD Pipeline](https://github.com/felipedresch/Petlove-Teste/actions/workflows/deploy.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3.11-blue.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)
 
-## Setup
+API inteligente para responder perguntas sobre pets utilizando **Google Gemini**, **LangChain** e **FastAPI**.
+
+**🌐 Demo em produção:** [https://fakepetloveapi.shop](https://fakepetloveapi.shop)
+
+---
+
+## Quick Start
 
 ### Pré-requisitos
 - Python 3.11+
-- uv (recomendado) ou pip
+- [UV](https://github.com/astral-sh/uv) (recomendado) ou pip
 
-### Instalação
+### Instalação Local
 
-1. Clone o repositório e navegue até a pasta:
 ```bash
-cd petlove-teste
-```
+# Clone o repositório
+git clone https://github.com/felipedresch/Petlove-Teste.git
+cd Petlove-Teste
 
-2. Instale as dependências:
-```bash
+# Instale as dependências
 uv sync
-```
 
-3. Configure as variáveis de ambiente criando um arquivo `.env` na raiz do projeto, seguindo o modelo do `.env.example`.
+# Configure as variáveis de ambiente
+cp .env.example .env
 
-4. Execute a aplicação:
-```bash
-uv run python -m app.main
-```
-
-Ou usando uvicorn diretamente:
-```bash
+# Execute a aplicação
 uv run uvicorn app.main:app --port 3000 --reload
 ```
 
-### Testar a API
+A API estará disponível em: `http://localhost:3000`
 
-Acesse `http://127.0.0.1:3000/api/health` para verificar se a API está funcionando.
+## Endpoints
 
-Para testar o endpoint protegido `/api/question-and-answer`, você precisa incluir o header `x-api-key`:
+### Health Check (público)
+```bash
+GET /api/health
+```
+
+**Resposta:**
+```json
+{
+    "status": "ok",
+    "message": "API está funcionando corretamente"
+}
+```
+
+### Question & Answer (protegido)
+```bash
+POST /api/question-and-answer
+Headers:
+  x-api-key: sua-chave-aqui
+  Content-Type: application/json
+
+Body:
+{
+  "question": "Qual ração você recomenda para um filhote de labrador?"
+}
+```
+
+**Exemplo de Resposta:**
+```json
+{
+    "response": "Olá! Para um filhote de labrador, que é uma raça de porte grande com muita energia, {.....}",
+    "metadata": {
+        "model": "gemini-2.0-flash",
+        "temperature": 0.7,
+        "input_tokens": 236,
+        "output_tokens": 285,
+        "total_tokens": 521,
+        "input_token_details": {
+            "cache_read": 0
+        }
+    }
+}
+
+```
+
+## Testes
 
 ```bash
-curl -X POST http://127.0.0.1:3000/api/question-and-answer \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: sua-chave-de-autenticacao-aqui" \
-  -d '{"question": "Qual ração você recomenda para um filhote de labrador?"}'
+# Rodar todos os testes
+uv run pytest -v
 ```
 
-### Testes
+**Cobertura de testes:**
+- Health check endpoint
+- Autenticação via API key
+- Question & Answer com mocks do Gemini
+- Tratamento de erros
 
-Execute os testes automatizados com pytest:
+---
 
-```bash
-uv run pytest
-```
-
-Os testes cobrem:
-- **Health check**: Validação do endpoint `/api/health`
-- **Autenticação**: Verificação de API key
-- **Perguntas e respostas**: Testes do endpoint `/api/question-and-answer` com mocks do Gemini
-
-## Deploy em Produção
-A API está disponível em: `https://fakepetloveapi.shop`
-
-## 📁 Estrutura do Projeto
+## Arquitetura
 
 ```
-petlove-teste/
-├── app/
-│   ├── api/          # Rotas HTTP
-│   ├── core/         # Lógica central (integrações, configs)
-│   ├── middleware/   # Middlewares (logging)
-│   ├── schemas/      # Modelos Pydantic
-│   └── main.py       # Aplicação FastAPI
-├── logs/             # Logs gerados automaticamente
-│   ├── api_requests.txt          # Requisições HTTP
-│   └── questions_answers.csv     # Perguntas e respostas
-├── tests/            # Testes
-├── .gitignore
-├── pyproject.toml    # Dependências do projeto
-└── README.md
+app/
+├── api/              # Endpoints HTTP
+│   ├── health.py             # Health check
+│   └── questions_and_answers.py  # Q&A endpoint
+├── core/             # Lógica de negócio
+│   ├── config.py             # Configurações
+│   ├── gemini_client.py      # Cliente Gemini
+│   ├── security.py           # Autenticação
+│   └── logger.py             # Logging customizado
+├── middleware/       # Middlewares
+│   └── logging_middleware.py
+├── schemas/          # Modelos Pydantic
+│   └── question.py
+└── main.py           # Entry point
 ```
 
-## Segurança
+### Stack Tecnológica
 
-A API implementa autenticação via API Key para proteger endpoints sensíveis:
+| Tecnologia | Uso |
+|-----------|-----|
+| **FastAPI** | Framework web moderno e assíncrono |
+| **Uvicorn** | Servidor ASGI de alta performance |
+| **LangChain** | Orquestração de LLMs |
+| **Google Gemini** | Modelo de linguagem |
+| **Pydantic** | Validação de dados |
+| **Docker** | Containerização |
+| **Traefik** | Reverse proxy + SSL automático |
+| **GitHub Actions** | CI/CD automatizado |
 
-- **Endpoint público**: `/api/health` - Não requer autenticação
-- **Endpoint protegido**: `/api/question-and-answer` - Requer header `x-api-key`
-
-## Tecnologias
-
-- **FastAPI** - Framework web moderno e rápido
-- **Uvicorn** - Servidor ASGI
-- **Pydantic** - Validação de dados
-- **LangChain** - Framework para aplicações com LLMs
-- **Google Gemini** - Modelo de linguagem da Google
+---
 
 ## Logging
 
-Sistema de logging automático que registra:
-- **logs/api_requests.txt**: Todas as requisições (método, rota, status, duração)
-- **logs/questions_answers.csv**: Perguntas e respostas do endpoint `/api/question-and-answer` (timestamp, pergunta, preview da resposta)
+O sistema registra automaticamente:
 
-Erros de logging não interrompem a API.
+- **`logs/api_requests.txt`**: Todas as requisições (método, rota, status, latência)
+- **`logs/questions_answers.csv`**: Histórico de perguntas e respostas
+
+Formato CSV:
+```csv
+timestamp,question,answer_preview
+2025-10-16 10:30:00,"Qual ração para filhote?","Para filhotes de raças grandes..."
+```
+
+---
+
+## Segurança
+
+- Autenticação via API Key (header `x-api-key`)
+- Rate limiting (via Traefik)
+- Container não-root
+- SSL/TLS automático (Let's Encrypt)
+- Secrets gerenciados via GitHub Actions
+
+---
+
+## Deploy Automatizado
+
+O projeto implementa **CI/CD completo** via GitHub Actions:
+
+### Pipeline
+1. **Push/PR** → Testes automatizados
+2. **Tests pass** → Build da imagem Docker
+3. **Merge na main** → Deploy automático na VM
+4. **Health check** → Aplicação online
+
+### Configuração
+
+Adicione os seguintes **Secrets** no repositório GitHub:
+
+| Secret | Descrição |
+|--------|-----------|
+| `VM_HOST` | IP ou domínio da VM |
+| `VM_USER` | Usuário SSH |
+| `VM_SSH_KEY` | Chave privada SSH |
+| `GEMINI_API_KEY` | API Key do Google Gemini |
+
